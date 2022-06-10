@@ -85,6 +85,7 @@ export default MyPage;
 ```jsx
 import { gql } from '@apollo/client';
 import { initializeApollo, addApolloState } from '../lib/apollo';
+import type { GetServerSidePropsContext } from 'next';
 
 const GET_CATS = gql`
   query GetCats {
@@ -95,21 +96,30 @@ const GET_CATS = gql`
   }
 `;
 
-const MyPage = (props) => {
-  return <div>{JSON.stringify(props.data)}</div>;
+const MyPage = () => {
+  const { data, loading } = useQuery(GET_CATS, {
+    fetchPolicy: 'cache-and-network',
+    onError: (error) => {
+      console.log(error);
+    },
+  });
+
+  if (!data && loading) {
+    return <div>Loading...</div>;
+  }
+
+  return <div>{JSON.stringify(data)}</div>;
 };
 
-export async function getServerSideProps() {
-  const apolloClient = initializeApollo();
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+  const apolloClient = initializeApollo(null, ctx);
 
-  const { data } = await apolloClient.query({
+  await apolloClient.query({
     query: GET_CATS,
   });
 
   return addApolloState(apolloClient, {
-    props: {
-      data,
-    },
+    props: {},
   });
 }
 
@@ -136,3 +146,7 @@ To build and run Dockerized **production-ready** container, run:
 ```bash
 docker-compose up --build
 ```
+
+## Preview live
+
+[Vercel](https://next-with-apollo-ssr.vercel.app)
