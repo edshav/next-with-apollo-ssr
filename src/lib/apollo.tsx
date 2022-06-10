@@ -3,8 +3,12 @@ import merge from 'deepmerge';
 import cookie from 'cookie';
 import type { GetServerSidePropsContext } from 'next';
 import type { IncomingMessage } from 'http';
-import type { NormalizedCacheObject } from '@apollo/client';
-import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
+import {
+  ApolloClient,
+  HttpLink,
+  InMemoryCache,
+  NormalizedCacheObject,
+} from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import isEqual from 'lodash.isequal';
 
